@@ -1,25 +1,25 @@
 {
   "name": "webpay-js",
   "version": "0.0.1",
-  "description": "",
+  "description": "WebPay node.js bindings https://webpay.jp",
   "keywords": [
     "webpay",
     "payment",
     "node"
   ],
-  "homepage": "https://github.com/maginemu/webpay-js",
+  "homepage": "https://github.com/webpay/webpay-node",
   "bugs": {
-    "email": "lonely.two.mn+github@gmail.com",
-    "url": "https://github.com/maginemu/webpay-js/issues"
+    "email": "support@webpay.jp",
+    "url": "https://github.com/webpay/webpay-node/issues"
   },
   "author": {
-    "name": "Kazuma MISHIMAGI",
-    "email": "lonely.two.mn@gmail.com",
-    "url": "https://github.com/maginemu"
+    "name": "WebPay, Inc.",
+    "email": "support@webpay.jp",
+    "url": "https://webpay.jp"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/maginemu/webpay-js.git"
+    "url": "https://github.com/webpay/webpay-node.git"
   },
   "dependencies": {
     "requirejs": "~2.1.9",
