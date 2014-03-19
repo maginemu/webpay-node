@@ -1,4 +1,4 @@
-/*global describe:true, it:true, before:true, after:true */
+/*global describe:true, it:true, beforeEach: true, afterEach: true */
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var http = require('http');
@@ -9,10 +9,10 @@ var helper = require('../helper');
 
 var webpay = require('../../');
 
-describe('webpay.account', function() {
+describe('webpay.charge', function() {
 	var server = null;
 	var mock = null;
-	before(function() {
+	beforeEach(function() {
 		webpay.api_base = 'http://localhost:2121';
 		mock = express();
 
@@ -24,13 +24,13 @@ describe('webpay.account', function() {
 		mock.get('/v1/charges/:id', helper.spyResponse('charges/retrieve'));
 	});
 
-	after(function() {
+	afterEach(function() {
 		server.close();
 	});
 
 
 	describe('.create', function() {
-		before(function() {
+		beforeEach(function() {
 			var res_map = helper.mapResponseForExpress();
 			var response_create_with_card = res_map['charges/create_with_card'];
 			var response_create_with_customer = res_map['charges/create_with_customer'];
@@ -121,7 +121,7 @@ describe('webpay.account', function() {
 
 	describe('.refund', function() {
 		var spy = null;
-		before(function() {
+		beforeEach(function() {
 			spy = helper.spyResponse('charges/refund');
 			mock.post('/v1/charges/:id/refund', spy);
 		});
@@ -145,7 +145,46 @@ describe('webpay.account', function() {
 
 
 	describe('.all', function() {
-		it('should return proper list with created[gt]');
-		it('should return proper list with customer');
+		it('should return proper list with created[gt]', function(done) {
+			var spy = helper.spyResponse('charges/all');
+			mock.get('/v1/charges', spy);
+
+			webpay.client.charge.all({
+				count: 3,
+				offset: 0,
+				created: { gt: 1378000000 }
+			}, function(err, res) {
+				var q = spy.args[0][0].query;
+				expect(q.count).to.equal('3');
+				expect(q.offset).to.equal('0');
+				expect(q.created).to.deep.equal({gt: '1378000000'});
+
+				expect(res.count).to.equal(11);
+				expect(res.url).to.equal('/v1/charges');
+				var data = res.data;
+				expect(data.length).to.equal(3);
+				expect(data[0].description).to.equal('Test Charge from Java');
+				done();
+			});
+		});
+
+		it('should return proper list with customer', function(done) {
+			var spy = helper.spyResponse('charges/all');
+			mock.get('/v1/charges', spy);
+
+			webpay.client.charge.all({
+				customer: 'cus_fgR4vI92r54I6oK'
+			}, function(err, res) {
+				var q = spy.args[0][0].query;
+				expect(q.customer).to.equal('cus_fgR4vI92r54I6oK');
+
+				expect(res.count).to.equal(11);
+				expect(res.url).to.equal('/v1/charges');
+				var data = res.data;
+				expect(data.length).to.equal(3);
+				expect(data[0].description).to.equal('Test Charge from Java');
+				done();
+			});
+		});
 	});
 });
