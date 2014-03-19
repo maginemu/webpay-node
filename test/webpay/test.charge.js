@@ -15,13 +15,12 @@ describe('webpay.account', function() {
 	var res_map = helper.mapResponseForExpress();
 	before(function() {
 		webpay.api_base = 'http://localhost:2121';
-		var map = res_map;
 		mock = express();
 
 		mock.use(express.json());
 		mock.use(express.urlencoded());
 
-		var response_retrieve = map['charges/retrieve'];
+		var response_retrieve = res_map['charges/retrieve'];
 		mock.get('/v1/charges/:id', function(req, res) {
 			var r = response_retrieve;
 			delete r.header['Connection'];
@@ -101,71 +100,67 @@ describe('webpay.account', function() {
 	});
 
 
-    describe('.retrieve', function() {
-        var id = 'ch_bWp5EG9smcCYeEx';
+	describe('.retrieve', function() {
+		var id = 'ch_bWp5EG9smcCYeEx';
 
-        it('should retrieve proper charge', function(done) {
-            webpay.client.charge.retrieve(id, function(err, res) {
-                expect(res).to.have.property('id').and.equal(id);
-                expect(res).to.have.property('card').and.have.property('fingerprint')
-                    .and.equal('215b5b2fe460809b8bb90bae6eeac0e0e0987bd7');
-                done();
-            });
-        });
-    });
+		it('should retrieve proper charge', function(done) {
+			webpay.client.charge.retrieve(id, function(err, res) {
+				expect(res).to.have.property('id').and.equal(id);
+				expect(res).to.have.property('card').and.have.property('fingerprint')
+					.and.equal('215b5b2fe460809b8bb90bae6eeac0e0e0987bd7');
+				done();
+			});
+		});
 
-
-    describe('.all', function() {
-        it('should return proper list with created[gt]');
-        it('should return proper list with customer');
-    });
-
-
-    describe('.refund', function() {
-        var refundHandler = null;
-        var spy = null;
-        before(function() {
-            var response_refund = res_map['charges/refund'];
-            refundHandler = function(req, res) {
-                var r = response_refund;
-                delete r.header['Connection'];
-                res.set(r.header);
-                res.send(r.status, r.body);
-            };
-            spy = sinon.spy(refundHandler);
-
-            mock.post('/v1/charges/:id/refund', spy);
-
-        });
-
-        var id = 'ch_bWp5EG9smcCYeEx';
-        it('should refund the retrieved charge', function(done) {
-            webpay.client.charge.retrieve(id, function(err, charge) {
-                expect(charge).to.have.property('refunded').and.to.be.false;
-                webpay.client.charge.refund(charge, {amount: 400}, function(err, refundedCharge) {
-                    expect(refundedCharge.refunded).to.be.true;
-                    expect(spy.args[0][0].body.amount).to.equal(400);
-                    done();
-                });
-            });
-        });
+		it('should return error for empty id', function(done) {
+			webpay.client.charge.retrieve('', function(err, res) {
+				expect(err.name).to.equal('InvalidRequestError');
+				expect(err).to.have.property('type').and.equal('invalid_request_error');
+				expect(err).to.have.property('message').and.equal('ID must not be empty');
+				expect(err).to.have.property('param').and.equal('id');
+				expect(res).to.not.be.ok;
+				done();
+			});
+		});
+	});
 
 
-        it('should refund the charge of specified id', function(done) {
-            webpay.client.charge.refund(id, {amount: 400}, function(err, refundedCharge) {
-                expect(refundedCharge.refunded).to.be.true;
-                expect(spy.args[0][0].body.amount).to.equal(400);
-                done();
-            });
-        });
+	describe('.refund', function() {
+		var spy = null;
+		before(function() {
+			var response_refund = res_map['charges/refund'];
+			var refundHandler = function(req, res) {
+				var r = response_refund;
+				delete r.header['Connection'];
+				res.set(r.header);
+				res.send(r.status, r.body);
+			};
+			spy = sinon.spy(refundHandler);
 
-        it('should refund the charge of specified id without amount', function(done) {
-            webpay.client.charge.refund(id, function(err, refundedCharge) {
-                expect(refundedCharge.refunded).to.be.true;
-                done();
-            });
-        });
+			mock.post('/v1/charges/:id/refund', spy);
 
-    });
+		});
 
+		var id = 'ch_bWp5EG9smcCYeEx';
+		it('should refund the charge of specified id', function(done) {
+			webpay.client.charge.refund(id, {amount: 400}, function(err, refundedCharge) {
+				expect(refundedCharge.refunded).to.be.true;
+				expect(spy.args[0][0].body.amount).to.equal(400);
+				done();
+			});
+		});
+
+		it('should refund the charge of specified id without amount', function(done) {
+			webpay.client.charge.refund(id, function(err, refundedCharge) {
+				expect(refundedCharge.refunded).to.be.true;
+				done();
+			});
+		});
+	});
+
+
+	describe('.all', function() {
+		it('should return proper list with created[gt]');
+		it('should return proper list with customer');
+	});
 });
