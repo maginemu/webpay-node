@@ -45,7 +45,7 @@ describe('webpay.charge', function() {
 				},
 				description: 'Test Charge from Java'
 			}, function(err, res) {
-				expect(err).to.not.exists;
+				expect(err).to.not.exist;
 				expect(res).to.have.property('id')
 					.and.equal('ch_2SS17Oh1r8d2djE');
 				expect(res).to.have.property('description')
@@ -65,7 +65,7 @@ describe('webpay.charge', function() {
 				customer: 'cus_fgR4vI92r54I6oK',
 				description: 'Test Charge from Java'
 			}, function(err, res) {
-				expect(err).to.not.exists;
+				expect(err).to.not.exist;
 				expect(res).to.have.property('id')
 					.and.equal('ch_2SS4fK4IL96535y');
 				expect(res).to.have.property('card')
@@ -207,7 +207,7 @@ describe('webpay.charge', function() {
 
 		it('should capture the charge', function(done) {
 			webpay.client.charge.capture(id, {amount: 1000}, function(err, res) {
-				expect(err).to.not.exists;
+				expect(err).to.not.exist;
 				expect(res.id).to.equal(id);
 				expect(res.captured).to.be.true;
 				expect(res.amount).to.equal(1000);
@@ -219,7 +219,7 @@ describe('webpay.charge', function() {
 
 		it('should capture the charge without amount param', function(done) {
 			webpay.client.charge.capture(id, function(err, res) {
-				expect(err).to.not.exists;
+				expect(err).to.not.exist;
 				expect(res.id).to.equal(id);
 				expect(res.captured).to.be.true;
 				expect(res.amount).to.equal(1000);
