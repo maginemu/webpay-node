@@ -1,11 +1,24 @@
-# WebPay-node
+# WebPay-node [![Build Status](https://travis-ci.org/webpay/webpay-node.png)](https://travis-ci.org/webpay/webpay-node)
 
 WebPay node.js bindings https://webpay.jp
 
-TODO: travis here
-
 ```js
-TODO: sample here
+var webpay = require('webpay');
+webpay.apiKey = 'YOUR_TEST_SECRET_KEY';
+webpay.client.charge.create({
+  amount: 330,
+  currency: "jpy",
+  card: {
+    number: "4242-4242-4242-4242",
+    exp_month: "11",
+    exp_year: "2014",
+    cvc: "123",
+    name: "KEI KUBO"
+  },
+  description: "Buy an item"
+}, function(err, res) {
+  console.log(res);
+});
 ```
 
 ## Installation
@@ -14,11 +27,35 @@ TODO: sample here
 
 ## Quick Start
 
-TODO
+Set your api key to `webpay` object from `webpay` module.
+
+```js
+var webpay = require('webpay');
+webpay.apiKey = 'YOUR_TEST_SECRET_KEY';
+```
+
+Call an interested method.
+
+```js
+webpay.client.charge.create({
+  amount: 330,
+  currency: "jpy",
+  card: {
+    number: "4242-4242-4242-4242",
+    exp_month: "11",
+    exp_year: "2014",
+    cvc: "123",
+    name: "KEI KUBO"
+  },
+  description: "Buy an item"
+}, function(err, res) {
+  console.log(res);
+});
+```
 
 ## More Information
 
-  * TODO: webpay node document at https://webpay.jp/docs/api/node
+  * node.js API document in WebPay official site [node.js APIドキュメント](https://webpay.jp/docs/api/node)
 
 ## Running Tests
 
@@ -26,9 +63,9 @@ To run the test suite, first invoke the following command within the repo, insta
 
     $ npm install
 
-Then run the tests:
+Then run the tests and jshint:
 
-    $ make test
+    $ make
 
 ## Acknowledge
 
