@@ -42,5 +42,8 @@
     "darwin",
     "linux"
   ],
-  "private": true
+  "private": true,
+  "scripts": {
+    "test": "make check"
+  }
 }
