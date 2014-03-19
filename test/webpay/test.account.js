@@ -51,9 +51,9 @@ describe('webpay.account', function() {
 		});
 	});
 
-	describe('.delete', function() {
+	describe('.deleteData', function() {
 		it('expected to return true', function(done) {
-			webpay.client.account.delete(function(err, res) {
+			webpay.client.account.deleteData(function(err, res) {
 				expect(err).to.be.null;
 				expect(res).to.be.true;
 				done();
