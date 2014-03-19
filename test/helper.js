@@ -169,8 +169,32 @@ function spyResponse(resourcePath) {
 	return sinon.spy(refundHandler);
 }
 
+var webpay = require('../');
+var http = require('http');
+var express = require('express');
+var server;
+var mock;
+
+function startServer() {
+	webpay.api_base = 'http://localhost:2121';
+	mock = express();
+
+	mock.use(express.json());
+	mock.use(express.urlencoded());
+
+	server = http.createServer(mock).listen(2121);
+}
+
+function stopServer() {
+	server.close();
+}
 
 module.exports = {
+	startServer: startServer,
+	stopServer: stopServer,
 	mapResponseForExpress: mapResponseForExpress,
-	spyResponse: spyResponse
+	spyResponse: spyResponse,
+	get mock() {
+		return mock;
+	}
 };

@@ -1,45 +1,18 @@
-/*global describe:true, it:true, before:true, after:true */
+/*global describe:true, it:true, beforeEach: true, afterEach: true */
 var expect = require('chai').expect;
-var sinon = require('sinon');
-var http = require('http');
-var express = require('express');
 var helper = require('../helper');
 
 var webpay = require('../../');
 
 describe('webpay.account', function() {
-	var server = null;
-	before(function() {
-		webpay.api_base = 'http://localhost:2121';
-		var map = helper.mapResponseForExpress();
-		var mock = express();
+	beforeEach(helper.startServer);
 
-		var response_retrieve = map['account/retrieve'];
-		mock.get('/v1/account/retrieve', function(req, res) {
-			var r = response_retrieve;
-			delete r.header['Connection'];
-			res.set(r.header);
-			res.send(r.status, r.body);
-		});
-
-		var response_delete = map['account/delete'];
-		mock.del('/v1/account/delete/data', function(req, res) {
-			var r = response_delete;
-			delete r.header['Connection'];
-			res.set(r.header);
-			res.send(r.status, r.body);
-		});
-
-		server = http.createServer(mock).listen(2121);
-	});
-
-	after(function() {
-		server.close();
-	});
-
+	afterEach(helper.stopServer);
 
 	describe('.retrieve', function() {
 		it('expected to retrieve account object', function(done) {
+			helper.mock.get('/v1/account', helper.spyResponse('account/retrieve'));
+
 			webpay.client.account.retrieve(function(err, res) {
 				expect(err).to.be.null;
 				expect(res).to.have.property('object').and.eql('account');
@@ -53,6 +26,8 @@ describe('webpay.account', function() {
 
 	describe('.deleteData', function() {
 		it('expected to return true', function(done) {
+			helper.mock.del('/v1/account/data', helper.spyResponse('account/delete'));
+
 			webpay.client.account.deleteData(function(err, res) {
 				expect(err).to.be.null;
 				expect(res).to.be.true;
