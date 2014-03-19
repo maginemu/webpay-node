@@ -5,6 +5,8 @@ var path = require('path');
 var _ = require('lodash');
 var sinon = require('sinon');
 
+var error = require('../lib/error');
+
 // cache
 var mapCache = {};
 
@@ -169,6 +171,7 @@ function spyResponse(resourcePath) {
 	return sinon.spy(refundHandler);
 }
 
+
 var webpay = require('../');
 var http = require('http');
 var express = require('express');
@@ -189,11 +192,27 @@ function stopServer() {
 	server.close();
 }
 
+
+/**
+ * Generate error by accessing dummy end-point
+ * @param {String} resourcePath
+ * @param {Function} callback
+ */
+function errorFromResponse(resourcePath, callback) {
+	startServer();
+	mock.get('/v1/dummy', spyResponse('errors/' + resourcePath));
+	webpay.client._execute({method: 'get', path: '/dummy', callback: function(err, res) {
+		stopServer();
+		callback(err);
+	}});
+}
+
 module.exports = {
 	startServer: startServer,
 	stopServer: stopServer,
 	mapResponseForExpress: mapResponseForExpress,
 	spyResponse: spyResponse,
+	errorFromResponse: errorFromResponse,
 	get mock() {
 		return mock;
 	}
