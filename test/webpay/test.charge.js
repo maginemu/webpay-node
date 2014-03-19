@@ -141,6 +141,14 @@ describe('webpay.charge', function() {
 				done();
 			});
 		});
+
+		it('should accept charge like object', function(done) {
+			webpay.client.charge.refund({id: id}, {amount: 400}, function(err, refundedCharge) {
+				expect(refundedCharge.id).to.equal(id);
+				expect(spy.args[0][0].params.id).to.equal(id);
+				done();
+			});
+		});
 	});
 
 
@@ -217,6 +225,14 @@ describe('webpay.charge', function() {
 				expect(res.amount).to.equal(1000);
 				expect(spy.args[0][0].params.id).to.equal(id);
 				expect(spy.args[0][0].body).to.deep.equal({});
+				done();
+			});
+		});
+
+		it('should accept charge like object', function(done) {
+			webpay.client.charge.capture({id: id}, {amount: 400}, function(err, res) {
+				expect(res.id).to.equal(id);
+				expect(spy.args[0][0].params.id).to.equal(id);
 				done();
 			});
 		});
