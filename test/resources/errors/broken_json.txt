@@ -1,16 +1,23 @@
-HTTP/1.1 402 Payment Required
+HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 X-Ua-Compatible: IE=Edge
-Cache-Control: no-cache
-X-Request-Id: 2d444b6f410907d8df24e45cd374e9b9
-X-Runtime: 0.005541
+Etag: "82c5b217d10ddfa51f97be68e64e36bf"
+Cache-Control: max-age=0, private, must-revalidate
+X-Request-Id: d90b88bc64cc2ebe6c6c5bbdc7c89db4
+X-Runtime: 0.014599
 Server: WEBrick/1.3.1 (Ruby/1.9.3/2013-02-22)
-Date: Sun, 08 Sep 2013 09:00:11 GMT
-Content-Length: 96
+Date: Wed, 11 Sep 2013 12:28:48 GMT
+Content-Length: 709
 Connection: Keep-Alive
 
 {
-  "error": {
-    "type": "card_error",
-    "message": "Your card number is incorrect",
-    "c
+  "id": "evt_39o9oUevb5NCeM1",
+  "object": "event",
+  "livemode": false,
+  "type": "customer.created",
+  "created": 1378823309,
+  "data": {
+    "object": {
+      "id": "cus_39o9oU1N1dRm4LZ",
+      "object": "customer",
+      "livemode": false,
