@@ -187,4 +187,38 @@ describe('webpay.charge', function() {
 			});
 		});
 	});
+
+
+	describe('.capture', function() {
+		var id = 'ch_2X01NDedxdrRcA3';
+		var spy = null;
+		beforeEach(function() {
+			spy = helper.spyResponse('charges/capture');
+			mock.post('/v1/charges/:id/capture', spy);
+		});
+
+		it('should capture the charge', function(done) {
+			webpay.client.charge.capture(id, {amount: 1000}, function(err, res) {
+				expect(err).to.not.exists;
+				expect(res.id).to.equal(id);
+				expect(res.captured).to.be.true;
+				expect(res.amount).to.equal(1000);
+				expect(spy.args[0][0].params.id).to.equal(id);
+				expect(spy.args[0][0].body.amount).to.equal(1000);
+				done();
+			});
+		});
+
+		it('should capture the charge without amount param', function(done) {
+			webpay.client.charge.capture(id, function(err, res) {
+				expect(err).to.not.exists;
+				expect(res.id).to.equal(id);
+				expect(res.captured).to.be.true;
+				expect(res.amount).to.equal(1000);
+				expect(spy.args[0][0].params.id).to.equal(id);
+				expect(spy.args[0][0].body).to.deep.equal({});
+				done();
+			});
+		});
+	});
 });
