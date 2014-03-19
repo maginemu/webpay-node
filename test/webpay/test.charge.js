@@ -1,8 +1,6 @@
 /*global describe:true, it:true, beforeEach: true, afterEach: true */
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var http = require('http');
-var express = require('express');
 var _ = require('lodash');
 
 var helper = require('../helper');
@@ -11,26 +9,9 @@ var matcher = require('../matcher');
 var webpay = require('../../');
 
 describe('webpay.charge', function() {
-	var server = null;
-	var mock = null;
-	var retrieveSpy = null;
+	beforeEach(helper.startServer);
 
-	beforeEach(function() {
-		webpay.api_base = 'http://localhost:2121';
-		mock = express();
-
-		mock.use(express.json());
-		mock.use(express.urlencoded());
-
-		server = http.createServer(mock).listen(2121);
-
-		retrieveSpy = helper.spyResponse('charges/retrieve');
-		mock.get('/v1/charges/:id', retrieveSpy);
-	});
-
-	afterEach(function() {
-		server.close();
-	});
+	afterEach(helper.stopServer);
 
 
 	describe('.create', function() {
@@ -39,7 +20,7 @@ describe('webpay.charge', function() {
 			var response_create_with_card = res_map['charges/create_with_card'];
 			var response_create_with_customer = res_map['charges/create_with_customer'];
 
-			mock.post('/v1/charges', function(req, res) {
+			helper.mock.post('/v1/charges', function(req, res) {
 				var r = null;
 				if (_.has(req.body, 'card')) {
 					r = response_create_with_card;
@@ -100,6 +81,12 @@ describe('webpay.charge', function() {
 
 	describe('.retrieve', function() {
 		var id = 'ch_bWp5EG9smcCYeEx';
+		var spy = null;
+
+		beforeEach(function() {
+			spy = helper.spyResponse('charges/retrieve');
+			helper.mock.get('/v1/charges/:id', spy);
+		});
 
 		it('should retrieve proper charge', function(done) {
 			webpay.client.charge.retrieve(id, function(err, res) {
@@ -112,7 +99,7 @@ describe('webpay.charge', function() {
 
 		it('should return error for empty id', function(done) {
 			webpay.client.charge.retrieve('', function(err, res) {
-				matcher.invalidId(retrieveSpy, err, res);
+				matcher.invalidId(spy, err, res);
 				done();
 			});
 		});
@@ -123,7 +110,7 @@ describe('webpay.charge', function() {
 		var spy = null;
 		beforeEach(function() {
 			spy = helper.spyResponse('charges/refund');
-			mock.post('/v1/charges/:id/refund', spy);
+			helper.mock.post('/v1/charges/:id/refund', spy);
 		});
 
 		var id = 'ch_bWp5EG9smcCYeEx';
@@ -169,7 +156,7 @@ describe('webpay.charge', function() {
 	describe('.all', function() {
 		it('should return proper list with created[gt]', function(done) {
 			var spy = helper.spyResponse('charges/all');
-			mock.get('/v1/charges', spy);
+			helper.mock.get('/v1/charges', spy);
 
 			webpay.client.charge.all({
 				count: 3,
@@ -192,7 +179,7 @@ describe('webpay.charge', function() {
 
 		it('should return proper list with customer', function(done) {
 			var spy = helper.spyResponse('charges/all');
-			mock.get('/v1/charges', spy);
+			helper.mock.get('/v1/charges', spy);
 
 			webpay.client.charge.all({
 				customer: 'cus_fgR4vI92r54I6oK'
@@ -216,7 +203,7 @@ describe('webpay.charge', function() {
 		var spy = null;
 		beforeEach(function() {
 			spy = helper.spyResponse('charges/capture');
-			mock.post('/v1/charges/:id/capture', spy);
+			helper.mock.post('/v1/charges/:id/capture', spy);
 		});
 
 		it('should capture the charge', function(done) {
