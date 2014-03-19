@@ -6,12 +6,15 @@ var express = require('express');
 var _ = require('lodash');
 
 var helper = require('../helper');
+var matcher = require('../matcher');
 
 var webpay = require('../../');
 
 describe('webpay.charge', function() {
 	var server = null;
 	var mock = null;
+	var retrieveSpy = null;
+
 	beforeEach(function() {
 		webpay.api_base = 'http://localhost:2121';
 		mock = express();
@@ -21,7 +24,8 @@ describe('webpay.charge', function() {
 
 		server = http.createServer(mock).listen(2121);
 
-		mock.get('/v1/charges/:id', helper.spyResponse('charges/retrieve'));
+		retrieveSpy = helper.spyResponse('charges/retrieve');
+		mock.get('/v1/charges/:id', retrieveSpy);
 	});
 
 	afterEach(function() {
@@ -108,11 +112,7 @@ describe('webpay.charge', function() {
 
 		it('should return error for empty id', function(done) {
 			webpay.client.charge.retrieve('', function(err, res) {
-				expect(err.name).to.equal('InvalidRequestError');
-				expect(err).to.have.property('type').and.equal('invalid_request_error');
-				expect(err).to.have.property('message').and.equal('ID must not be empty');
-				expect(err).to.have.property('param').and.equal('id');
-				expect(res).to.not.be.ok;
+				matcher.invalidId(retrieveSpy, err, res);
 				done();
 			});
 		});
@@ -146,6 +146,20 @@ describe('webpay.charge', function() {
 			webpay.client.charge.refund({id: id}, {amount: 400}, function(err, refundedCharge) {
 				expect(refundedCharge.id).to.equal(id);
 				expect(spy.args[0][0].params.id).to.equal(id);
+				done();
+			});
+		});
+
+		it('should return error for empty id', function(done) {
+			webpay.client.charge.refund('', function(err, res) {
+				matcher.invalidId(spy, err, res);
+				done();
+			});
+		});
+
+		it('should return error for empty id of object', function(done) {
+			webpay.client.charge.refund({id: ''}, function(err, res) {
+				matcher.invalidId(spy, err, res);
 				done();
 			});
 		});
@@ -233,6 +247,20 @@ describe('webpay.charge', function() {
 			webpay.client.charge.capture({id: id}, {amount: 400}, function(err, res) {
 				expect(res.id).to.equal(id);
 				expect(spy.args[0][0].params.id).to.equal(id);
+				done();
+			});
+		});
+
+		it('should return error for empty id', function(done) {
+			webpay.client.charge.capture('', function(err, res) {
+				matcher.invalidId(spy, err, res);
+				done();
+			});
+		});
+
+		it('should return error for empty id of object', function(done) {
+			webpay.client.charge.capture({id: ''}, function(err, res) {
+				matcher.invalidId(spy, err, res);
 				done();
 			});
 		});
