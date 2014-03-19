@@ -12,7 +12,6 @@ var webpay = require('../../');
 describe('webpay.account', function() {
 	var server = null;
 	var mock = null;
-	var res_map = helper.mapResponseForExpress();
 	before(function() {
 		webpay.api_base = 'http://localhost:2121';
 		mock = express();
@@ -20,15 +19,9 @@ describe('webpay.account', function() {
 		mock.use(express.json());
 		mock.use(express.urlencoded());
 
-		var response_retrieve = res_map['charges/retrieve'];
-		mock.get('/v1/charges/:id', function(req, res) {
-			var r = response_retrieve;
-			delete r.header['Connection'];
-			res.set(r.header);
-			res.send(r.status, r.body);
-		});
-
 		server = http.createServer(mock).listen(2121);
+
+		mock.get('/v1/charges/:id', helper.spyResponse('charges/retrieve'));
 	});
 
 	after(function() {
@@ -38,6 +31,7 @@ describe('webpay.account', function() {
 
 	describe('.create', function() {
 		before(function() {
+			var res_map = helper.mapResponseForExpress();
 			var response_create_with_card = res_map['charges/create_with_card'];
 			var response_create_with_customer = res_map['charges/create_with_customer'];
 
@@ -48,7 +42,7 @@ describe('webpay.account', function() {
 				} else {
 					r = response_create_with_customer;
 				}
-				delete r.header['Connection'];
+				delete r.header.Connection;
 				res.set(r.header);
 				res.send(r.status, r.body);
 			});
@@ -128,17 +122,8 @@ describe('webpay.account', function() {
 	describe('.refund', function() {
 		var spy = null;
 		before(function() {
-			var response_refund = res_map['charges/refund'];
-			var refundHandler = function(req, res) {
-				var r = response_refund;
-				delete r.header['Connection'];
-				res.set(r.header);
-				res.send(r.status, r.body);
-			};
-			spy = sinon.spy(refundHandler);
-
+			spy = helper.spyResponse('charges/refund');
 			mock.post('/v1/charges/:id/refund', spy);
-
 		});
 
 		var id = 'ch_bWp5EG9smcCYeEx';
