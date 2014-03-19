@@ -1,6 +1,5 @@
 /*global describe:true, it:true, beforeEach: true, afterEach: true */
 var expect = require('chai').expect;
-var sinon = require('sinon');
 var _ = require('lodash');
 
 var helper = require('../helper');
