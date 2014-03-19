@@ -179,7 +179,7 @@ var server;
 var mock;
 
 function startServer() {
-  webpay.api_base = 'http://localhost:2121';
+  webpay.apiBase = 'http://localhost:2121';
   mock = express();
 
   mock.use(express.json());
