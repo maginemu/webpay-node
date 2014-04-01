@@ -72,6 +72,9 @@ Then run the tests and jshint:
 Webpay-node was originally created by @maginemu, and extended by WebPay team.
 We thank @maginemu for starting such a great work and willingly giving us the ownership.
 
+Former owner of ["webpay" on npm repository](https://www.npmjs.org/package/webpay) is @e-jigsaw. He transfered this name-space to us.
+We also thank @e-jigsaw.
+
 ## License
 
 MIT
