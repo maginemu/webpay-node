@@ -77,4 +77,6 @@ We also thank @e-jigsaw.
 
 ## License
 
-MIT
+[The MIT License (MIT)](http://opensource.org/licenses/mit-license.html)
+
+Copyright (c) 2013- maginemu, WebPay.
