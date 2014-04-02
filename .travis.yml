@@ -4,3 +4,6 @@ node_js:
   - "0.10"
   - "0.8"
   - "0.6"
+notifications:
+  webhooks:
+    secure: "TrOkomb85bgm+NUpvRD2ZLhB/pE4BjDR5vGYUl3+0QpRbjqv+XcMJ3+TrwAVG3w/Q5/xGjt69AnqpFCaZgsgSaCd9qqo2lwGTCs6UOLOPWGww01VGStn51XAA+d9ub93N7gW5zz3GTkI/4lBvcLCJtBo4xSkLqyI41BoWnjTO3E="
