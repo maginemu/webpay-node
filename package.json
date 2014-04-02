@@ -1,6 +1,6 @@
 {
   "name": "webpay",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "WebPay node.js bindings https://webpay.jp",
   "keywords": [
     "webpay",
@@ -42,7 +42,7 @@
     "darwin",
     "linux"
   ],
-  "private": true,
+  "private": false,
   "scripts": {
     "test": "make check"
   }
